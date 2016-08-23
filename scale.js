@@ -29,7 +29,7 @@
 
             self._destroy();
 
-            var zoomMask = $(imgDom).parent().get(0);
+            var zoomMask = imgDom.parentNode;
             imgDom.onload = function() {
                 if(self.params.verticalMoveCenter == true) {    //移动时总以垂直中心为准
                     imgDom.style.cssText = "position: absolute;top: 50%;margin-top:-" + (imgDom.offsetHeight / 2) + "px";
