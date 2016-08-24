@@ -33,21 +33,19 @@
             self._destroy();
 
             var zoomMask = imgDom.parentNode;
-            imgDom.onload = function() {
-                if(self.params.verticalMoveCenter == true) {    //移动时总以垂直中心为准
-                    imgDom.style.cssText = "position: absolute;top: 50%;margin-top:-" + (imgDom.offsetHeight / 2) + "px";
-                } else {    //以父层的真实高宽移动为准
-                    imgDom.style.cssText = "position: absolute;";
-                }
-                self.imgBaseWidth = imgDom.offsetWidth;     //图片基础宽度
-                self.imgBaseHeight = imgDom.offsetHeight;   //图片基础高度
-                self.element = imgDom;
-                self.params.wrapWidth = zoomMask.offsetWidth;    //可视区域宽度
-                self.params.wrapHeight = zoomMask.offsetHeight;    //可视区域高度
-                self.params.realWidth = imgDom.width;             //地图宽度
-                self.params.realHeight = imgDom.height;            //地图高度
-                self.addEventStart();
+            if(self.params.verticalMoveCenter == true) {    //移动时总以垂直中心为准
+                imgDom.style.cssText = "position: absolute;top: 50%;margin-top:-" + (imgDom.offsetHeight / 2) + "px";
+            } else {    //以父层的真实高宽移动为准
+                imgDom.style.cssText = "position: absolute;";
             }
+            self.imgBaseWidth = imgDom.offsetWidth;     //图片基础宽度
+            self.imgBaseHeight = imgDom.offsetHeight;   //图片基础高度
+            self.element = imgDom;
+            self.params.wrapWidth = zoomMask.offsetWidth;    //可视区域宽度
+            self.params.wrapHeight = zoomMask.offsetHeight;    //可视区域高度
+            self.params.realWidth = imgDom.width;             //地图宽度
+            self.params.realHeight = imgDom.height;            //地图高度
+            self.addEventStart();
         },
         addEventStart: function() {
             var self = this;
@@ -95,8 +93,6 @@
 
             self.tapDefault = false;
 
-            self.eventStop(e);
-
             var touchTarget = e.targetTouches.length; //获得触控点数
 
             self._changeData(); //重新初始化图片、可视区域数据，由于放大会产生新的计算
@@ -108,6 +104,9 @@
 
                 self.finger = false;
             } else {
+                // 禁止默认事件
+                self.eventStop(e);
+
                 self.finger = true;
 
                 self.startFingerDist = self.getTouchDist(e).dist;
@@ -119,13 +118,16 @@
             var self = this;
             self.tapDefault = true;
 
-            self.eventStop(e);
-
             var touchTarget = e.targetTouches.length; //获得触控点数
 
             if (touchTarget == 1 && !self.finger) {
 
                 self._move(e);
+            }
+
+            if(!self.overLeftSide && !self.overRightSide) {
+                // 禁止默认事件
+                self.eventStop(e);
             }
 
             if (touchTarget >= 2) {
@@ -163,9 +165,6 @@
                 pageX = getPage(e, "pageX"), //获取移动坐标
                 pageY = getPage(e, "pageY");
 
-            // 禁止默认事件
-            self.eventStop(e);
-
             // 获得移动距离
             self.distX = (pageX - self.basePageX) + self.newX;
             self.distY = (pageY - self.basePageY) + self.newY;
@@ -177,12 +176,12 @@
             } else if (self.distX < -self.width) {
                 self.moveX = -self.width + Math.round((self.distX + self.width) / self.buffMove);
             }
-            if(self.moveX > 3) {
+            if(self.moveX > 10) {
                 self.overLeftSide = true;
             } else {
                 self.overLeftSide = false;
             }
-            if(self.moveX < -self.width -3) {
+            if(self.moveX < -self.width -10) {
                 self.overRightSide = true;
             } else {
                 self.overRightSide = false;
