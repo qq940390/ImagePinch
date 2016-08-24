@@ -28,7 +28,8 @@
             self.finger = false; //触摸手指的状态 false：单手指 true：多手指
             self.overLeftSide = false;  //移动超出了左边界
             self.overRightSide = false; //移动超出了右边界
-            
+            self.isResetting = false;
+
             self._destroy();
 
             var zoomMask = imgDom.parentNode;
@@ -78,6 +79,8 @@
             this.newX = 0;
             this.newY = 0;
             this.scale = 1;
+            this.realWidth = this.imgBaseWidth;
+            this.realHeight = this.imgBaseHeight;
         },
         // 更新地图信息
         _changeData: function() {
@@ -268,7 +271,7 @@
                         b = self.element.offsetHeight - self.wrapHeight + Math.round(self.wrapHeight - self.imgBaseHeight) / 2;
 
                     if (self.distY >= -a) {
-                        self.newY = -a;
+                        self.newY = self.isResetting ? 0 : -a;
                     } else if (self.distY <= -b) {
                         self.newY = -b;
                     } else {
@@ -310,10 +313,12 @@
             this.element.style.transform = getTranslate(x, y);
         },
         reset : function() {
+            this.isResetting = true;
             this._destroy();
             this.element.style.width = this.imgBaseWidth + "px";
             this.setImagePos();
             this.refresh(0, 0, "0s", "ease");
+	    this.isResetting = false;
         },
         // 获取多点触控
         getTouchDist: function(e) {
