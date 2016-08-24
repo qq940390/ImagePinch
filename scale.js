@@ -15,8 +15,8 @@
         return support.touch ? event.changedTouches[0][page] : event[page];
     }
 
-    var ImagesZoom = function() {};
-    ImagesZoom.prototype = {
+    var ImagePinch = function() {};
+    ImagePinch.prototype = {
         // 给初始化数据
         init: function(imgDom, param) {
             var self = this;
@@ -369,6 +369,6 @@
         }
     };
 
-    window.ImagesZoom = ImagesZoom;
+    window.ImagePinch = ImagePinch;
 
 })(this);
