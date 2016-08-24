@@ -138,7 +138,9 @@
             var self = this;
             console.log(self.tapDefault)
 
-            if (!self.finger && !self.tapDefault) {
+            if (!self.finger && !self.tapDefault && self.scale > 1) {
+                // 禁止默认事件
+                self.eventStop(e);
                 self.reset();
                 return;
             }
@@ -203,18 +205,21 @@
             self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX - self.newX * ratio);
             self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY) / 2 - self.newY * ratio);
 
+            var newImgWidth = 0;
             if (imgWidth >= self.imgBaseWidth) {
                 self.element.style.width = imgWidth + "px";
                 self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
                 self.finger = true;
+                newImgWidth = imgWidth;
             } else {
                 if (imgWidth < self.imgBaseWidth) {
                     self.element.style.width = self.imgBaseWidth + "px";
+                    newImgWidth = self.imgBaseWidth;
                 }
             }
 
-            self.scale = self.element.style.width / self.imgBaseWidth;
-            self.scale.toFixed(2);
+            self.scale = parseInt(newImgWidth) / self.imgBaseWidth;
+            self.scale.toFixed(4);
             self.finger = true;
         },
         // 移动坐标
