@@ -23,14 +23,17 @@
             self.params = param || {};
 
             self.scale = 1;
+            self.isMoving = false;
             self.buffMove = 5; //缓冲系数
             self.buffScale = 1.5; //放大系数
             self.finger = false; //触摸手指的状态 false：单手指 true：多手指
             self.overLeftSide = false;  //移动超出了左边界
             self.overRightSide = false; //移动超出了右边界
             self.isResetting = false;
-
-            self._destroy();
+            self.distX = 0;
+            self.distY = 0;
+            self.newX = 0;
+            self.newY = 0;
 
             var zoomMask = imgDom.parentNode;
             if(self.params.verticalMoveCenter == true) {    //移动时总以垂直中心为准
@@ -121,7 +124,6 @@
             var touchTarget = e.targetTouches.length; //获得触控点数
 
             if (touchTarget == 1 && !self.finger) {
-
                 self._move(e);
             }
 
@@ -143,6 +145,10 @@
                 self.eventStop(e);
                 self.reset();
                 return;
+            } else if(!self.finger && !self.tapDefault && self.scale == 1) {
+                if(typeof self.params.onTap == 'function') {
+                    self.params.onTap(e);
+                }
             }
 
             self._changeData(); //重新计算数据
@@ -160,12 +166,14 @@
                 self.newX = -self.width;
             }
             self.setImagePos();
+            self.isMoving = false;
         },
         _move: function(e) {
 
             var self = this,
                 pageX = getPage(e, "pageX"), //获取移动坐标
                 pageY = getPage(e, "pageY");
+            self.isMoving = true;
 
             // 获得移动距离
             self.distX = (pageX - self.basePageX) + self.newX;
@@ -208,7 +216,7 @@
             var newImgWidth = 0;
             if (imgWidth >= self.imgBaseWidth) {
                 self.element.style.width = imgWidth + "px";
-                self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
+                self.refresh(-self.imgNewX, -self.imgNewY, false, false, "0s", "ease");
                 self.finger = true;
                 newImgWidth = imgWidth;
             } else {
@@ -261,7 +269,7 @@
                     }
                 }
             }
-            self.refresh(self.moveX, self.moveY, "0s", "ease");
+            self.refresh(self.moveX, self.moveY, false, false, "0s", "ease");
         },
         // 重置数据
         setImagePos: function() {
@@ -297,32 +305,39 @@
                     }
                 }
             }
-            self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+            self.refresh(self.newX, self.newY, false, false, hideTime, "ease-in-out");
         },
         // 执行图片移动
-        refresh: function(x, y, timer, type) {
-            this.element.style.mozTransitionProperty = "-moz-transform";
+        refresh: function(x, y, imgWidth, imgHeight, timer, type) {
+            if(typeof imgWidth != 'undefined' && imgWidth != false) {
+                this.element.style.width = imgWidth + "px";
+
+            }
+            if(typeof imgHeight != 'undefined' && imgHeight != false) {
+                this.element.style.height = imgHeight + "px";
+            }
+
+            this.element.style.mozTransitionProperty = 'all';//"-moz-transform";
             this.element.style.mozTransitionDuration = timer;
             this.element.style.mozTransitionTimingFunction = type;
             this.element.style.mozTransform = getTranslate(x, y);
 
-            this.element.style.webkitTransitionProperty = "-webkit-transform";
+            this.element.style.webkitTransitionProperty = 'all';//"-webkit-transform";
             this.element.style.webkitTransitionDuration = timer;
             this.element.style.webkitTransitionTimingFunction = type;
             this.element.style.webkitTransform = getTranslate(x, y);
 
-            this.element.style.transitionProperty = "transform";
+            this.element.style.transitionProperty = 'all';//"transform";
             this.element.style.transitionDuration = timer;
             this.element.style.transitionTimingFunction = type;
             this.element.style.transform = getTranslate(x, y);
         },
         reset : function() {
             this.isResetting = true;
+            this.refresh(0, 0, this.imgBaseWidth, false, ".1s", "ease");
+            this._changeData();
             this._destroy();
-            this.element.style.width = this.imgBaseWidth + "px";
-            this.setImagePos();
-            this.refresh(0, 0, "0s", "ease");
-	    this.isResetting = false;
+            this.isResetting = false;
         },
         // 获取多点触控
         getTouchDist: function(e) {

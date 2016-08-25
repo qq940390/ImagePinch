@@ -17,7 +17,7 @@ html,body{padding:0;margin:0;height:100%;}
         <img src="http://www.wjh.gzdsw.com/movie/test2.jpg" />
     </div>
     <script>
-        ImagesZoomHelper = {
+        ImagePinchHelper = {
             imgZooms: {},
             init: function(param) {
                 var self = this,
@@ -25,14 +25,14 @@ html,body{padding:0;margin:0;height:100%;}
                 var imgList = document.querySelectorAll(params.elem + " img");
                 var len = imgList.length;
                 for(var i=0; i<len; i++) {
-                    self.imgZooms['zoom_'+i] = new window.ImagesZoom();
+                    self.imgZooms['zoom_'+i] = new window.ImagePinch();
                     self.imgZooms['zoom_'+i].init(imgList[i], params);
                 }
             }
         };
 
         $(function () {
-            ImagesZoomHelper.init({
+            ImagePinchHelper.init({
                 elem: ".content",
                 verticalMoveCenter: false  //为true时，移动时总以垂直中心为准； 为false时，以父层的真实高宽移动为准
             });
