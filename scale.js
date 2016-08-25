@@ -27,6 +27,8 @@
             self.buffMove = 5; //缓冲系数
             self.buffScale = 1.5; //放大系数
             self.finger = false; //触摸手指的状态 false：单手指 true：多手指
+            self.overTopSide = false;   //移动超出了上边界
+            self.overBottomSide = false;//移动超出了下边界
             self.overLeftSide = false;  //移动超出了左边界
             self.overRightSide = false; //移动超出了右边界
             self.isResetting = false;
@@ -127,7 +129,7 @@
                 self._move(e);
             }
 
-            if(!self.overLeftSide && !self.overRightSide) {
+            if(!self.overLeftSide && !self.overRightSide && !self.overTopSide && !self.overBottomSide) {
                 // 禁止默认事件
                 self.eventStop(e);
             }
@@ -186,16 +188,11 @@
             } else if (self.distX < -self.width) {
                 self.moveX = -self.width + Math.round((self.distX + self.width) / self.buffMove);
             }
-            if(self.moveX > 10) {
-                self.overLeftSide = true;
-            } else {
-                self.overLeftSide = false;
-            }
-            if(self.moveX < -self.width -10) {
-                self.overRightSide = true;
-            } else {
-                self.overRightSide = false;
-            }
+            self.overTopSide = self.moveY > 10 ? true : false;
+            self.overBottomSide = self.moveY < -self.height - 10 ? true : false;
+            self.overLeftSide = self.moveX > 10 ? true : false;
+            self.overRightSide = self.moveX < -self.width - 10 ? true : false;
+
             self.movePos();
             self.finger = false;
         },
