@@ -331,7 +331,7 @@
         },
         reset : function() {
             this.isResetting = true;
-            this.refresh(0, 0, this.imgBaseWidth, false, ".1s", "ease");
+            this.refresh(0, 0, this.imgBaseWidth, false, "0s", "ease");
             this._changeData();
             this._destroy();
             this.isResetting = false;
