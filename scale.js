@@ -181,6 +181,7 @@
             self.distX = (pageX - self.basePageX) + self.newX;
             self.distY = (pageY - self.basePageY) + self.newY;
 
+            //计算水平位移
             if (self.distX > 0) {
                 self.moveX = Math.round(self.distX / self.buffMove);
             } else if (self.distX <= 0 && self.distX >= -self.width) {
@@ -188,49 +189,8 @@
             } else if (self.distX < -self.width) {
                 self.moveX = -self.width + Math.round((self.distX + self.width) / self.buffMove);
             }
-            self.overTopSide = self.moveY > 10 ? true : false;
-            self.overBottomSide = self.moveY < -self.height - 10 ? true : false;
-            self.overLeftSide = self.moveX > 10 ? true : false;
-            self.overRightSide = self.moveX < -self.width - 10 ? true : false;
 
-            self.movePos();
-            self.finger = false;
-        },
-        // 图片缩放
-        _zoom: function(e) {
-            var self = this;
-            self.eventStop(e);
-
-            var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
-                ratio = nowFingerDist / self.startFingerDist, //计算缩放比
-                imgWidth = Math.round(self.realWidth * ratio), //计算图片宽度
-                imgHeight = Math.round(self.realHeight * ratio); //计算图片高度
-
-            // 计算图片新的坐标
-            self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX - self.newX * ratio);
-            self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY) / 2 - self.newY * ratio);
-
-            var newImgWidth = 0;
-            if (imgWidth >= self.imgBaseWidth) {
-                self.element.style.width = imgWidth + "px";
-                self.refresh(-self.imgNewX, -self.imgNewY, false, false, "0s", "ease");
-                self.finger = true;
-                newImgWidth = imgWidth;
-            } else {
-                if (imgWidth < self.imgBaseWidth) {
-                    self.element.style.width = self.imgBaseWidth + "px";
-                    newImgWidth = self.imgBaseWidth;
-                }
-            }
-
-            self.scale = parseInt(newImgWidth) / self.imgBaseWidth;
-            self.scale.toFixed(4);
-            self.finger = true;
-        },
-        // 移动坐标
-        movePos: function() {
-            var self = this;
-
+            //计算垂直位移
             if(self.params.verticalMoveCenter == true) {    //移动时总以垂直中心为准
                 if (self.height < 0) {  //还没有超过一屏时
                     if (self.element.offsetWidth == self.imgBaseWidth) {
@@ -266,7 +226,54 @@
                     }
                 }
             }
+
+            var xOut = 10;
+            if(self.element.offsetWidth == self.imgBaseWidth) {
+                xOut = 1;
+            }
+            self.overTopSide = self.moveY > 1 ? true : false;
+            self.overBottomSide = self.moveY < -self.height - 1 ? true : false;
+            self.overLeftSide = self.moveX > xOut ? true : false;
+            self.overRightSide = self.moveX < -self.width - xOut ? true : false;
+
+            //如果图片等于最初尺寸，则不进行水平移动
+            if(self.element.offsetWidth == self.imgBaseWidth) {
+                self.moveX = 0;
+            }
+
             self.refresh(self.moveX, self.moveY, false, false, "0s", "ease");
+            self.finger = false;
+        },
+        // 图片缩放
+        _zoom: function(e) {
+            var self = this;
+            self.eventStop(e);
+
+            var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
+                ratio = nowFingerDist / self.startFingerDist, //计算缩放比
+                imgWidth = Math.round(self.realWidth * ratio), //计算图片宽度
+                imgHeight = Math.round(self.realHeight * ratio); //计算图片高度
+
+            // 计算图片新的坐标
+            self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX - self.newX * ratio);
+            self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY) / 2 - self.newY * ratio);
+
+            var newImgWidth = 0;
+            if (imgWidth >= self.imgBaseWidth) {
+                self.element.style.width = imgWidth + "px";
+                self.refresh(-self.imgNewX, -self.imgNewY, false, false, "0s", "ease");
+                self.finger = true;
+                newImgWidth = imgWidth;
+            } else {
+                if (imgWidth < self.imgBaseWidth) {
+                    self.element.style.width = self.imgBaseWidth + "px";
+                    newImgWidth = self.imgBaseWidth;
+                }
+            }
+
+            self.scale = parseInt(newImgWidth) / self.imgBaseWidth;
+            self.scale.toFixed(4);
+            self.finger = true;
         },
         // 重置数据
         setImagePos: function() {
