@@ -65,25 +65,30 @@
             self.width = self.realWidth - self.wrapWidth; //地图的宽度减去可视区域的宽度
             self.height = self.realHeight - self.wrapHeight; //地图的高度减去可视区域的高度
 
-            self.element.addEventListener("touchstart", function(e) {
+            var myTouchStartFun = function(e) {
                 self._touchstart(e);
-            }, false);
-            self.element.addEventListener("touchmove", function(e) {
+            }
+            self.touchStartFun = myTouchStartFun;
+
+            var myTouchMoveFun = function(e) {
                 self._touchmove(e);
-            }, false);
-            self.element.addEventListener("touchend", function(e) {
+            }
+            self.touchMoveFun = myTouchMoveFun;
+
+            var myTouchEndFun = function(e) {
                 self._touchend(e);
-            }, false);
+            }
+            self.touchEndFun = myTouchEndFun;
+
+            self.element.addEventListener("touchstart", myTouchStartFun, false);
+            self.element.addEventListener("touchmove", myTouchMoveFun, false);
+            self.element.addEventListener("touchend", myTouchEndFun, false);
         },
         // 重置坐标数据
-        _destroy: function() {
-            this.distX = 0;
-            this.distY = 0;
-            this.newX = 0;
-            this.newY = 0;
-            this.scale = 1;
-            this.realWidth = this.imgBaseWidth;
-            this.realHeight = this.imgBaseHeight;
+        destroy: function() {
+            this.element.removeEventListener('touchstart', this.touchStartFun);
+            this.element.removeEventListener('touchmove', this.touchMoveFun);
+            this.element.removeEventListener('touchend', this.touchEndFun);
         },
         // 更新地图信息
         _changeData: function() {
@@ -340,7 +345,13 @@
             this.isResetting = true;
             this.refresh(0, 0, this.imgBaseWidth, false, "0s", "ease");
             this._changeData();
-            this._destroy();
+            this.distX = 0;
+            this.distY = 0;
+            this.newX = 0;
+            this.newY = 0;
+            this.scale = 1;
+            this.realWidth = this.imgBaseWidth;
+            this.realHeight = this.imgBaseHeight;
             this.isResetting = false;
         },
         // 获取多点触控
