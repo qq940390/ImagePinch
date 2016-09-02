@@ -156,6 +156,9 @@
                 if(typeof self.params.onTap == 'function') {
                     self.params.onTap(e);
                 }
+                // 禁止默认事件
+                self.eventStop(e);
+                return false;
             }
 
             self._changeData(); //重新计算数据
