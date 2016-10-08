@@ -1,20 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <script src="http://static.gzdsw.com/js/jquery.js"></script>
 <script src="./scale.js"></script>
 <title>缩放图片测试</title>
-<style>
+<meta name="keywords" content="缩放图片测试" />
+<meta name="description" content="缩放图片测试" />
+<style type="text/css">
 html,body{padding:0;margin:0;height:100%;}
-.content{position: relative;width: 100%;height: 100%;display: block;overflow: hidden;}
+.content{position: relative;width: 100%;height: 80%;display: block;overflow: hidden;}
 .content img{width: 100%;}
+
+.gosource{padding:10px;border-bottom:1px solid #ddd;font-size:16px;font-weight:bold;}
+.gosource a{display:block;overflow:hidden;}
+.copyright{text-align:center;padding:10px 0;}
 </style>
 </head>
 <body>
+    <div class="gosource"><a href="http://wujinhai.cn">去往起源之地</a></div>
     <div class="content" style="position:relative;">
-        <img src="http://www.wjh.gzdsw.com/movie/test2.jpg" />
+        <img src="http://www.tswczxyy.com/UploadFiles/2012/11/21/11215784873.jpg" />
     </div>
     <script>
         $(function () {
@@ -25,8 +33,11 @@ html,body{padding:0;margin:0;height:100%;}
             document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
         })
     </script>
+    
+    <footer>
+        <div class="copyright">
+            © 2016. 五行缺風, 940390@qq.com &nbsp;&nbsp; <a href="http://www.miitbeian.gov.cn" target="_blank">黔ICP备08000064号-3</a>
+        </div>
+    </footer>
 </body>
 </html>
-
-
-
